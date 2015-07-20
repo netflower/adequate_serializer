@@ -10,7 +10,7 @@ class Model
     @attributes = attributes
   end
 
-  def read_attribute(name)
+  def read_attribute_for_serialization(name)
     @attributes[name]
   end
 end

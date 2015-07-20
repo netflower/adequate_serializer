@@ -42,7 +42,8 @@ module AdequateSerializer
 
     def attributes
       self.class._attributes.each_with_object({}) do |name, hash|
-        hash[name] = send(name)
+        clean_name = clean_name(name)
+        hash[clean_name] = send(name)
       end
     end
 
@@ -60,12 +61,17 @@ module AdequateSerializer
 
     def self.define_method_for(attr)
       define_method(attr) do
-        object && object.read_attribute(attr)
+        object && object.read_attribute_for_serialization(attr)
       end
     end
 
     def root_name
       (root || object.class.name.underscore.parameterize).to_sym
+    end
+
+    def clean_name(name)
+      name = name.to_s.gsub(/\?\Z/, '')
+      name.to_sym
     end
 
     def serialize_multiple_associations(association_keys)
