@@ -16,6 +16,7 @@ class Model
 end
 
 class Person < Model
+  attr_accessor :colleagues, :superior
 end
 
 class TestSerializer < AdequateSerializer::Base

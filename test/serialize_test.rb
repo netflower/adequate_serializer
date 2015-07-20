@@ -13,10 +13,10 @@ module AdequateSerializer
     def test_serialize_collections_with_serializer
       peggy = Person.new(id: 1, name: 'Peggy')
       edwin = Person.new(id: 2, name: 'Edwin')
-      expected = [
-        TestSerializer.new(peggy).as_json,
-        TestSerializer.new(edwin).as_json
-      ]
+      expected = { people: [
+        TestSerializer.new(peggy, root: false).as_json,
+        TestSerializer.new(edwin, root: false).as_json
+      ]}
 
       helper.serialize([peggy, edwin], serializer: TestSerializer)
         .must_equal expected
@@ -25,10 +25,10 @@ module AdequateSerializer
     def test_serialize_collections_without_serializer
       peggy = Person.new(id: 1, name: 'Peggy', occupation: 'Agent')
       edwin = Person.new(id: 2, name: 'Edwin', occupation: 'Butler')
-      expected = [
-        PersonSerializer.new(peggy).as_json,
-        PersonSerializer.new(edwin).as_json
-      ]
+      expected = { people: [
+        PersonSerializer.new(peggy, root: false).as_json,
+        PersonSerializer.new(edwin, root: false).as_json
+      ]}
 
       helper.serialize([peggy, edwin]).must_equal expected
     end
