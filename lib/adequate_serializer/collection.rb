@@ -1,15 +1,19 @@
+require 'adequate_serializer/helper'
+
 module AdequateSerializer
   class Collection
-    attr_accessor :collection
+    include Helper
 
-    def initialize(collection, serializer_klass)
+    attr_accessor :collection, :serializer
+
+    def initialize(collection, serializer: nil)
       @collection = collection
-      @serializer_klass = serializer_klass
+      @serializer = serializer
     end
 
     def as_json
-      @collection.map do |item|
-        @serializer_klass.new(item).as_json
+      collection.map do |item|
+        serialize(item, serializer: serializer)
       end
     end
   end

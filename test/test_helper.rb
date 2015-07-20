@@ -21,3 +21,7 @@ end
 class TestSerializer < AdequateSerializer::Base
   attributes :id, :name
 end
+
+class PersonSerializer < AdequateSerializer::Base
+  attributes :id, :name, :occupation
+end
