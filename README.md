@@ -104,6 +104,19 @@ In this case the PostSerializer will be used to nest the user's posts under the
 You can also include multiple associations by using an array of association
 keys.
 
+#### Overriding association methods
+
+If you want to override any association, you can use:
+
+```ruby
+class UserSerializer::Base
+  attributes :id, :created_at, :updated_at
+
+  def posts
+    object.posts.published
+  end
+end
+```
 
 ## Development
 

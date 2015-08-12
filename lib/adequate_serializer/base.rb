@@ -81,8 +81,16 @@ module AdequateSerializer
     end
 
     def serialize_association(association_key)
-      associated_objects = object.send(association_key)
+      associated_objects = associated_objects(association_key)
       serialize(associated_objects, root: false)
+    end
+
+    def associated_objects(association_key)
+      if respond_to?(association_key)
+        send(association_key)
+      else
+        object.send(association_key)
+      end
     end
   end
 end
