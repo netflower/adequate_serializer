@@ -46,5 +46,19 @@ module AdequateSerializer
       PersonSerializer.new(peggy, includes: [:colleagues, :superior])
         .associations.must_equal expected
     end
+
+    def test_association_override
+      peggy = Person.new
+      daniel = Person.new(id: 1, name: 'Daniel', occupation: 'Agent')
+      jack = Person.new(id: 4, name: 'Jack', occupation: 'Agent')
+      peggy.colleagues = [daniel, jack]
+      expected = {
+        colleagues: Collection.new([jack], root: false).as_json
+      }
+
+      OverrideAssociationSerializer.new(peggy, includes: :colleagues)
+        .associations
+        .must_equal expected
+    end
   end
 end

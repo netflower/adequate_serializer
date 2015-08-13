@@ -26,3 +26,13 @@ end
 class PersonSerializer < AdequateSerializer::Base
   attributes :id, :name, :occupation
 end
+
+class OverrideAssociationSerializer < AdequateSerializer::Base
+  attributes :id, :name
+
+  def colleagues
+    object.colleagues.select do |colleague|
+      colleague.read_attribute_for_serialization(:id) > 2
+    end
+  end
+end
