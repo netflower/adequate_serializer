@@ -29,7 +29,17 @@ module AdequateSerializer
     private
 
     def root_name
-      (root || collection.first.class.name.underscore.parameterize.pluralize).to_sym
+      (root || build_root).to_sym
+    end
+
+    def build_root
+      if collection.respond_to?(:klass)
+        klass = collection.klass
+      else
+        klass = collection.first.class
+      end
+
+      klass == NilClass ? 'nil' : klass.name.underscore.parameterize.pluralize
     end
   end
 end

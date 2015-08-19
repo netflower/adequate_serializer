@@ -69,6 +69,11 @@ or use no root at all:
 serialize(@user, root: false)
 ```
 
+It works with a ActiveRecord::Relation or an array. However, if you could end
+up serializing an empty array, you should define a root yourself. Otherwise it
+cannot infer the root key and you will end up with a `nil` key. This
+isn't needed for ActiveRecord::Relations.
+
 ### Attributes
 
 You can specify which attributes of your objects will be serialized in the

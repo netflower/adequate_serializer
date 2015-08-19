@@ -19,6 +19,9 @@ class Person < Model
   attr_accessor :colleagues, :superior
 end
 
+class Agent
+end
+
 class TestSerializer < AdequateSerializer::Base
   attributes :id, :name
 end
@@ -36,3 +39,19 @@ class OverrideAssociationSerializer < AdequateSerializer::Base
     end
   end
 end
+
+class Relation
+  include Enumerable
+
+  attr_reader :klass
+
+  def initialize(klass, values)
+    @klass  = klass
+    @values = values
+  end
+
+  def each(&block)
+    @values.each(&block)
+  end
+end
+
