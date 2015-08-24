@@ -30,6 +30,10 @@ class PersonSerializer < AdequateSerializer::Base
   attributes :id, :name, :occupation
 end
 
+class AssociationsSerializer < AdequateSerializer::Base
+  associations :colleagues, :superior
+end
+
 class OverrideAssociationSerializer < AdequateSerializer::Base
   attributes :id, :name
 
@@ -54,4 +58,3 @@ class Relation
     @values.each(&block)
   end
 end
-

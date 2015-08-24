@@ -44,7 +44,25 @@ module AdequateSerializer
       }
 
       PersonSerializer.new(peggy, includes: [:colleagues, :superior])
-        .associations.must_equal expected
+        .associations
+        .must_equal expected
+    end
+
+    def test_default_associations
+      peggy = Person.new
+      roger = Person.new(id: 2, name: 'Roger', occupation: 'Chief')
+      peggy.superior = roger
+      daniel = Person.new(id: 3, name: 'Daniel', occupation: 'Agent')
+      jack = Person.new(id: 4, name: 'Jack', occupation: 'Agent')
+      peggy.colleagues = [daniel, jack]
+      expected = {
+        colleagues: Collection.new([daniel, jack], root: false).as_json,
+        superior: PersonSerializer.new(roger, root: false).as_json
+      }
+
+      AssociationsSerializer.new(peggy, includes: [:colleagues, :superior])
+        .associations
+        .must_equal expected
     end
 
     def test_association_override
@@ -57,6 +75,26 @@ module AdequateSerializer
       }
 
       OverrideAssociationSerializer.new(peggy, includes: :colleagues)
+        .associations
+        .must_equal expected
+    end
+
+    def test_association_is_nil
+      peggy = Person.new
+      peggy.colleagues = Relation.new(Person, [])
+      expected = { superior: nil, colleagues: [] }
+
+      PersonSerializer.new(peggy, includes: [:superior, :colleagues])
+        .associations
+        .must_equal expected
+    end
+
+    def test_no_duplicated_associations
+      peggy = Person.new
+      peggy.colleagues = Relation.new(Person, [])
+      expected = { superior: nil, colleagues: [] }
+
+      AssociationsSerializer.new(peggy, includes: [:superior, :colleagues])
         .associations
         .must_equal expected
     end

@@ -6,18 +6,26 @@ module AdequateSerializer
     include Helper
 
     class << self
+      attr_accessor :_associations
       attr_accessor :_attributes
     end
 
     def self.inherited(base)
+      base._associations = (_associations || []).dup
       base._attributes = (_attributes || []).dup
     end
 
-    def self.attributes(*attrs)
-      attrs.each do |attr|
-        @_attributes << attr
+    def self.attributes(*attributes)
+      attributes.each do |attribute|
+        @_attributes << attribute
 
-        define_method_for(attr)
+        define_method_for(attribute)
+      end
+    end
+
+    def self.associations(*associations)
+      associations.each do |association|
+        @_associations << association
       end
     end
 
@@ -48,13 +56,8 @@ module AdequateSerializer
     end
 
     def associations
-      return {} if includes.nil?
-
-      if includes.respond_to?(:each)
-        serialize_multiple_associations(includes)
-      else
-        { includes => serialize_association(includes) }
-      end
+      all_associations = self.class._associations | Array(includes)
+      serialize_multiple_associations(all_associations)
     end
 
     private
@@ -82,7 +85,10 @@ module AdequateSerializer
 
     def serialize_association(association_key)
       associated_objects = associated_objects(association_key)
-      serialize(associated_objects, root: false)
+
+      unless associated_objects.nil?
+        serialize(associated_objects, root: false)
+      end
     end
 
     def associated_objects(association_key)

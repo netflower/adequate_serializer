@@ -97,17 +97,32 @@ Within a serializer's methods, you can access the object being serialized as
 
 ### Associations
 
-If you want to include associations, just specify them in the controller.
+Associations that always have to be included can be specified in the
+serializer:
+
+```ruby
+class UserSerializer::Base
+  attributes :id, :created_at, :updated_at
+  associations :posts, :comments
+end
+```
+
+If the association only needs to be included for certain endpoints, it can be
+specified in the controller:
 
 ```ruby
 serialize(@user, includes: :posts)
 ```
 
-In this case the PostSerializer will be used to nest the user's posts under the
-`posts` key in the user JSON object.
+The PostSerializer will be used to nest the user's posts under the
+`posts` key in the user JSON object in both cases.
 
-You can also include multiple associations by using an array of association
-keys.
+You can also include multiple associations in the controller by using an array
+of association keys.
+
+```ruby
+serialize(@user, includes: [:posts, :comments])
+```
 
 #### Overriding association methods
 
@@ -116,6 +131,7 @@ If you want to override any association, you can use:
 ```ruby
 class UserSerializer::Base
   attributes :id, :created_at, :updated_at
+  associations :posts
 
   def posts
     object.posts.published
