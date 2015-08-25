@@ -77,13 +77,13 @@ module AdequateSerializer
     end
 
     def normalized_associations
-      all_associations = self.class._associations | Array(includes)
+      all_associations = Array(includes) | self.class._associations
 
       all_associations.each_with_object({}) do |(key, value), hash|
         if key.is_a?(Hash)
           hash.merge!(key)
         else
-          hash[key] = value
+          hash[key] ||= value
         end
       end
     end

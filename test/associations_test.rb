@@ -114,5 +114,22 @@ module AdequateSerializer
         .associations
         .must_equal expected
     end
+
+    def test_includes_over_default_associations
+      peggy = Person.new
+      roger = Person.new(id: 2, name: 'Roger', occupation: 'Chief')
+      daniel = Person.new(id: 3, name: 'Daniel', occupation: 'Agent')
+      peggy.colleagues = [daniel]
+      daniel.superior = roger
+      expected = {
+        colleagues: Collection.new([daniel], root: false, includes: :superior)
+          .as_json,
+        superior: nil
+      }
+
+      AssociationsSerializer.new(peggy, includes: [colleagues: :superior])
+        .associations
+        .must_equal expected
+    end
   end
 end
