@@ -117,11 +117,11 @@ serialize(@user, includes: :posts)
 The PostSerializer will be used to nest the user's posts under the
 `posts` key in the user JSON object in both cases.
 
-You can also include multiple associations in the controller by using an array
-of association keys.
+You can also include multiple associations or even nest them by using the
+`includes` syntax.
 
 ```ruby
-serialize(@user, includes: [:posts, :comments])
+serialize(@user, includes: [:posts, comments: :user])
 ```
 
 #### Overriding association methods

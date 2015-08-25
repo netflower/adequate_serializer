@@ -48,6 +48,22 @@ module AdequateSerializer
         .must_equal expected
     end
 
+    def test_nested_associations
+      peggy = Person.new
+      roger = Person.new(id: 2, name: 'Roger', occupation: 'Chief')
+      daniel = Person.new(id: 3, name: 'Daniel', occupation: 'Agent')
+      peggy.colleagues = [daniel]
+      daniel.superior = roger
+      expected = {
+        colleagues: Collection.new([daniel], root: false, includes: :superior)
+          .as_json
+      }
+
+      PersonSerializer.new(peggy, includes: [colleagues: :superior])
+        .associations
+        .must_equal expected
+    end
+
     def test_default_associations
       peggy = Person.new
       roger = Person.new(id: 2, name: 'Roger', occupation: 'Chief')

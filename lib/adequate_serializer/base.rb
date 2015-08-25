@@ -56,8 +56,7 @@ module AdequateSerializer
     end
 
     def associations
-      all_associations = self.class._associations | Array(includes)
-      serialize_multiple_associations(all_associations)
+      serialize_multiple_associations(normalized_associations)
     end
 
     private
@@ -77,17 +76,29 @@ module AdequateSerializer
       name.to_sym
     end
 
-    def serialize_multiple_associations(association_keys)
-      association_keys.each_with_object({}) do |key, hash|
-        hash[key] = serialize_association(key)
+    def normalized_associations
+      all_associations = self.class._associations | Array(includes)
+
+      all_associations.each_with_object({}) do |(key, value), hash|
+        if key.is_a?(Hash)
+          hash.merge!(key)
+        else
+          hash[key] = value
+        end
       end
     end
 
-    def serialize_association(association_key)
+    def serialize_multiple_associations(associations)
+      associations.each_with_object({}) do |(key, includes), hash|
+        hash[key] = serialize_association(key, includes)
+      end
+    end
+
+    def serialize_association(association_key, includes)
       associated_objects = associated_objects(association_key)
 
       unless associated_objects.nil?
-        serialize(associated_objects, root: false)
+        serialize(associated_objects, root: false, includes: includes)
       end
     end
 
