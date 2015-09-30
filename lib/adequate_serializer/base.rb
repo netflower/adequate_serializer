@@ -29,12 +29,13 @@ module AdequateSerializer
       end
     end
 
-    attr_accessor :object, :includes, :root
+    attr_accessor :object, :includes, :root, :scope
 
-    def initialize(object, includes: nil, root: nil)
+    def initialize(object, options = {})
       @object = object
-      @includes = includes
-      @root = root
+      @includes = options[:includes]
+      @root = options[:root]
+      @scope = options[:scope]
     end
 
     def as_json(options = {})
@@ -98,7 +99,9 @@ module AdequateSerializer
       associated_objects = associated_objects(association_key)
 
       unless associated_objects.nil?
-        serialize(associated_objects, root: false, includes: includes)
+        serialize(
+          associated_objects, root: false, includes: includes, scope: scope
+        )
       end
     end
 

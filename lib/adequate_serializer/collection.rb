@@ -5,19 +5,17 @@ module AdequateSerializer
   class Collection
     include Helper
 
-    attr_accessor :collection, :includes, :root, :serializer
+    attr_accessor :collection, :root, :collection_options
 
-    def initialize(collection, includes: nil, root: nil, serializer: nil)
+    def initialize(collection, options = {})
       @collection = collection
-      @includes = includes
-      @root = root
-      @serializer = serializer
+      @root = options.delete(:root)
+      @collection_options = options
+      @collection_options[:root] = false
     end
 
     def as_json(options = {})
-      data = collection.map do |item|
-        serialize(item, includes: includes, root: false, serializer: serializer)
-      end
+      data = collection.map { |item| serialize(item, collection_options) }
 
       if root == false
         data

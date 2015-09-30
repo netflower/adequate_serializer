@@ -139,6 +139,29 @@ class UserSerializer::Base
 end
 ```
 
+#### Scope
+
+By default, the `current_user` is available in the serializer as `scope`.
+
+```ruby
+class UserSerializer::Base
+  attributes :id, :created_at, :updated_at
+  associations :posts
+
+  def posts
+    Post.where(user_id: scope.id).published
+  end
+end
+```
+
+The scope can be customized in the controller.
+
+```ruby
+serialization_scope :user_id
+```
+
+In this example the `user_id` will be available as `scope`.
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies.
