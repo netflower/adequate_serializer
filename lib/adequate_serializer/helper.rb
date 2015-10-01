@@ -1,14 +1,19 @@
 module AdequateSerializer
   module Helper
-    def serialize(entity, includes: nil, root: nil, serializer: nil)
+    def serialize(entity, options = {})
       if entity.respond_to?(:each)
-        Collection.new(
-          entity, includes: includes, root: root, serializer: serializer
-        ).as_json
+        serializer = Collection
       else
-        serializer ||= Object.const_get("#{entity.class}Serializer")
-        serializer.new(entity, includes: includes, root: root).as_json
+        serializer = options[:serializer] || serializer_klass(entity)
       end
+
+      serializer.new(entity, options).as_json
+    end
+
+    private
+
+    def serializer_klass(entity)
+      Object.const_get("#{entity.class}Serializer")
     end
   end
 end
