@@ -18,6 +18,7 @@ module AdequateSerializer
 
       def inherited(base)
         base._serialization_scope = _serialization_scope
+        super(base)
       end
 
       def serialization_scope(scope)
